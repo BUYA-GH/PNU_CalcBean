@@ -30,9 +30,6 @@ def dishSegmentation(img_bgr):
 
 def colorSegmentation(dish):
     dish = cv2.cvtColor(dish, cv2.COLOR_BGR2RGB)
-    plt.imshow(dish)
-    plt.show()
-
     hsv_dish = cv2.cvtColor(dish, cv2.COLOR_RGB2HSV)
 
     low = np.array([0, 60, 0])
@@ -41,3 +38,18 @@ def colorSegmentation(dish):
     mask = cv2.inRange(hsv_dish, low, high)
     res = cv2.bitwise_and(dish, dish, mask=mask)
     return res
+
+def binarization(kong):
+    kong = cv2.cvtColor(kong, cv2.COLOR_RGB2GRAY)
+    blr = cv2.GaussianBlur(kong, (0, 0), 1)
+    circles = cv2.HoughCircles(blr, cv2.HOUGH_GRADIENT, 1, 50,
+                           param1=50, param2=30, minRadius=0, maxRadius=0)
+    if circles is not None:
+        print(circles.shape[1])
+    else:
+        print(0)
+    """
+    ret, binarykong = cv2.threshold(kong, 100, 255, cv2.THRESH_BINARY)
+    plt.imshow(binarykong, cmap="gray")
+    plt.show()
+    """
