@@ -2,13 +2,17 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+# imgSize = 
+imgSize = (400, 300)
+
 kong_bgr = cv2.imread('../../Open/t10/5.jpg')
-kong_bgr = cv2.resize(kong_bgr, (1024, 768))
+kong_bgr = cv2.resize(kong_bgr, imgSize)
 
 kong_rgb = cv2.cvtColor(kong_bgr, cv2.COLOR_BGR2RGB)
 
 # 사각형 좌표: 시작점의 x,y  ,넢이, 너비
-rectangle = (180, 10, 900, 750)
+rectangle = (int(imgSize[0]*1/8), 0, int(imgSize[0]*7/8), imgSize[1])
+print(rectangle)
 
 mask = np.zeros(kong_rgb.shape[:2], np.uint8)
 # grabCut에 사용할 임시 배열 생성
@@ -32,3 +36,4 @@ image_rgb_nobg = kong_rgb * mask_2[:, :, np.newaxis]
 # plot
 plt.imshow(image_rgb_nobg)
 plt.show()
+

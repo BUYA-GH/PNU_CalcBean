@@ -12,12 +12,13 @@ DATA_ADDR = ['t01/5.jpg', 't02/5.jpg', 't03/5.jpg', 't04/5.jpg', 't05/5.jpg', 't
 openImgAddr = '../../Open/'
 hiddenImgAddr = '../../Hidden/'
 
-imageSize = (1024, 768)
+imageSize = (800, 600)
 
 for i in range(len(DATA_ADDR)):
     kong_bgr = cv2.imread( openImgAddr+DATA_ADDR[i] )
+    #kong_bgr = cv2.medianBlur(kong_bgr, 3)
     kong_bgr = cv2.resize(kong_bgr, imageSize)
 
-    dishImage = dishSegmentation(kong_bgr)
+    dishImage = dishSegmentation(kong_bgr, imageSize)
     kongImage = colorSegmentation(dishImage)
     binaryKong = binarization(kongImage)

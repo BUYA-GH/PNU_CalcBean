@@ -2,11 +2,9 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-imageSize = (1024, 768)
-
-def dishSegmentation(img_bgr):
+def dishSegmentation(img_bgr, imgSize):
     # 사각형 좌표: 시작점의 x,y  ,넢이, 너비
-    rectangle = (180, 10, 900, 750)
+    rectangle = (int(imgSize[0]*1/8), 0, int(imgSize[0]*7/8), imgSize[1])
 
     mask = np.zeros(img_bgr.shape[:2], np.uint8)
     # grabCut에 사용할 임시 배열 생성
@@ -40,16 +38,13 @@ def colorSegmentation(dish):
     return res
 
 def binarization(kong):
-    kong = cv2.cvtColor(kong, cv2.COLOR_RGB2GRAY)
-    blr = cv2.GaussianBlur(kong, (0, 0), 1)
-    circles = cv2.HoughCircles(blr, cv2.HOUGH_GRADIENT, 1, 50,
-                           param1=50, param2=30, minRadius=0, maxRadius=0)
+    kong_gray = cv2.cvtColor(kong, cv2.COLOR_RGB2GRAY)
+    blr = cv2.GaussianBlur(kong_gray, (0, 0), 1)
+    circles = cv2.HoughCircles(blr, cv2.HOUGH_GRADIENT, 1, 18, param1=50, param2=15, minRadius=8, maxRadius=13)
     if circles is not None:
+        circles = np.uint16(np.around(circles))
+        for i in circles[0,:]:
+            cv2.circle(kong,(i[0],i[1]),i[2],(0,255,0),2)
         print(circles.shape[1])
     else:
         print(0)
-    """
-    ret, binarykong = cv2.threshold(kong, 100, 255, cv2.THRESH_BINARY)
-    plt.imshow(binarykong, cmap="gray")
-    plt.show()
-    """
