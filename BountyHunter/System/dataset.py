@@ -36,15 +36,3 @@ def colorSegmentation(dish):
     mask = cv2.inRange(hsv_dish, low, high)
     res = cv2.bitwise_and(dish, dish, mask=mask)
     return res
-
-def countCircle(kong):
-    kong_gray = cv2.cvtColor(kong, cv2.COLOR_RGB2GRAY)
-    blr = cv2.GaussianBlur(kong_gray, (0, 0), 1)
-    circles = cv2.HoughCircles(blr, cv2.HOUGH_GRADIENT, 1, 18, param1=50, param2=15, minRadius=8, maxRadius=13)
-    if circles is not None:
-        circles = np.uint16(np.around(circles))
-        for i in circles[0,:]:
-            cv2.circle(kong,(i[0],i[1]),i[2],(0,255,0),2)
-        return circles.shape[1]
-    else:
-        return 0
