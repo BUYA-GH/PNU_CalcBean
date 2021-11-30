@@ -24,6 +24,7 @@ def dishSegmentation(img_bgr, imgSize):
 
     # 이미지에 새로운 마스크를 곱행 배경을 제외
     image_bgr_nobg = img_bgr * mask_2[:, :, np.newaxis]
+
     return image_bgr_nobg
 
 def colorSegmentation(dish):
@@ -35,4 +36,5 @@ def colorSegmentation(dish):
 
     mask = cv2.inRange(hsv_dish, low, high)
     res = cv2.bitwise_and(dish, dish, mask=mask)
+
     return res

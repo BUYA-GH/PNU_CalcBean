@@ -19,16 +19,13 @@ def countCircle(kong):
     kong_gray = cv2.cvtColor(kong, cv2.COLOR_RGB2GRAY)
     blr = cv2.GaussianBlur(kong_gray, (0, 0), 1)
     circles = cv2.HoughCircles(blr, cv2.HOUGH_GRADIENT, 1, 18, param1=50, param2=15, minRadius=8, maxRadius=13)
+
     if circles is not None:
-        circles = np.uint16(np.around(circles))
-        for i in circles[0,:]:
-            cv2.circle(kong,(i[0],i[1]),i[2],(0,255,0),2)
         return circles.shape[1]
     else:
         return 0
 
-imageSize = (800, 600)
-def ensembleCount(addr):
+def ensembleCount(addr, imageSize):
     addrImages = []
     sampleImages = []
     ansArray = []
@@ -36,12 +33,11 @@ def ensembleCount(addr):
     for i in IMG_ADDR :
         kong = cv2.imread(os.path.join( addr, i ))
         kong = cv2.resize(kong, imageSize)
-        kong = dishSegmentation(kong, imageSize)
         kong = colorSegmentation(kong)
 
         kong = cv2.cvtColor(kong, cv2.COLOR_RGB2HSV)
-        kong = cv2.calcHist([kong], [0,1], None, [180,256], [0,180,0, 256])
-        cv2.normalize(kong, kong, 0, 1, cv2.NORM_MINMAX)
+        kong = cv2.calcHist([kong], [0, 1], None, [55,190], [0,55,60,190])
+        #cv2.normalize(kong, kong, 0, 1, cv2.NORM_MINMAX)
 
         addrImages.append(kong)
 
@@ -51,8 +47,8 @@ def ensembleCount(addr):
         for j in IMG_ADDR : 
             oppe = cv2.imread(os.path.join(sampleImgAddr, i, j))
             oppe = cv2.cvtColor(oppe, cv2.COLOR_BGR2HSV)
-            oppe = cv2.calcHist([oppe], [0,1], None, [180,256], [0,180,0,256])
-            cv2.normalize(oppe, oppe, 0, 1, cv2.NORM_MINMAX)
+            oppe = cv2.calcHist([oppe], [0, 1], None, [55,190], [0,55,60,190])
+            #cv2.normalize(oppe, oppe, 0, 1, cv2.NORM_MINMAX)
 
             arr.append(oppe)
         sampleImages.append(arr)
@@ -63,10 +59,10 @@ def ensembleCount(addr):
         for j in range(len(DATA_ADDR)) :
             oppe = sampleImages[j][i]
 
-            ret = cv2.compareHist(kong, oppe, cv2.HISTCMP_CHISQR)
+            ret = cv2.compareHist(kong, oppe, cv2.HISTCMP_CORREL)
             temp.append(ret)
         
-        ans = temp.index(min(temp))
+        ans = temp.index(max(temp))
         ansArray.append(DATA_ANS[ans])
 
     ret = np.array(ansArray)
